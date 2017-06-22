@@ -1,0 +1,40 @@
+web:
+    build: ./docker/centos7-nginx
+    ports:
+        - "80:80"
+    volumes:
+        - ".:/var/www"
+    links:
+        - php
+
+mariadb:
+    image: "mariadb"
+    restart: always
+    ports:
+       - "3306:3306"
+#    volumes:
+#        - "./docker/mysql:/var/lib/mysql"
+    environment:
+        - MYSQL_ROOT_PASSWORD=1
+        - MYSQL_DATABASE=yii2basic
+        - MYSQL_USER=root
+        - MYSQL_PASSWORD=1
+
+php:
+    build: ./docker/centos7-php7.1-remi
+    ports:
+       - "9000:9000"
+    volumes:
+        - ".:/var/www"
+    links:
+        - mariadb
+
+
+
+node:
+  build: ./docker/node
+  volumes:
+    - "./node:/src/app"
+  ports:
+    - "3000:3000"
+  command: nodemon -L app/app.js
