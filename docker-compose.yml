@@ -1,11 +1,12 @@
 web:
     build: ./docker/centos7-nginx
     ports:
-        - "80:80"
+        - "81:80"
     volumes:
         - ".:/var/www"
     links:
         - php
+        - node
 
 mariadb:
     image: "mariadb"
@@ -35,6 +36,4 @@ node:
   build: ./docker/node
   volumes:
     - "./node:/src/app"
-  ports:
-    - "3000:3000"
   command: nodemon -L app/app.js

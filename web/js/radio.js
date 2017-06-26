@@ -14,73 +14,65 @@ $( document ).ready(function() {
          * @type {number}
          */
 
-        var serverUrl = 'http://127.0.0.1:3000';
-        var socket = io(serverUrl);
+
+        var socket = io();
 
         socket.on('fromnode', function(data){
             disabledSocket = true;
             $( ":radio[name='" + data.radio + "']" ).trigger( "click" );
         });
 
+        var SetRadioButtonChkProperty = function (labelElement, name){
+            var nameEl = $(labelElement).find(':radio').attr('name');
 
-        InitRadio('q1');
+            if(disabledSocket === false){
+                //userId only for example
+                socket.emit('tonode', {userId:'2',radio:nameEl});
+            }
+            disabledSocket = false;
 
+            if($(labelElement).hasClass('active') === true){
+                $( ":radio[name='"+nameEl+"']" ).prop('checked', false);
+                $(labelElement).change(function() {
+                    $(labelElement).removeClass('active');
+                });
+            }
+        };
 
-
-        function InitRadio(name){
+        var InitRadio = function (name){
 
             $.each($(':radio'), function(){
                 $(this).parent().on("click", function(event){
                     SetRadioButtonChkProperty(this, 'run');
                 });
             });
-        }
 
-        function SetRadioButtonChkProperty(labelElement, name){
-            var nameEl = $(labelElement).find(':radio').attr('name');
-
-            if(disabledSocket === false){
-                //userId only for example
-                console.log($('#questionForm').serializeArray())
-                socket.emit('tonode', {userId:'2',radio:nameEl});
-            }
-            disabledSocket = false;
-
-
-            if($(labelElement).hasClass('active') === true){
-                $( ":radio[name='"+nameEl+"']" ).prop('checked', false);
-                $( labelElement ).change(function() {
-                    $(labelElement).removeClass('active')
-                });
-            }
-
-
-        }
-
-        $( "#questionForm" ).submit(function( event ) {
-            if($('.questionBlock').length !== $('#questionForm label.btn-default.active').length){
+            $( "#questionForm" ).submit(function( event ) {
+                if($('.questionBlock').length !== $('#questionForm label.btn-default.active').length){
                     $( ".error-answer" ).fadeIn( "slow", function() {
-                });
-                event.preventDefault();
-            }else {
+                    });
+                    event.preventDefault();
+                }else {
 
-                /**
-                 * all elements uncheck who don't have class active
-                 */
-                $('#questionForm label.btn-default:not(.active)').each(function (index, el) {
-                    $(el).find(":radio").prop('checked', false)
-                });
+                    /**
+                     * all elements uncheck who don't have class active
+                     */
+                    $('#questionForm label.btn-default:not(.active)').each(function (index, el) {
+                        $(el).find(":radio").prop('checked', false);
+                    });
 
 
-                /**
-                 * check radio if label has class active
-                 */
-                $('#questionForm label.btn-default.active').each(function (index, el) {
-                    $(el).find(":radio").prop('checked', true)
-                });
-            }
-        });
+                    /**
+                     * check radio if label has class active
+                     */
+                    $('#questionForm label.btn-default.active').each(function (index, el) {
+                        $(el).find(":radio").prop('checked', true);
+                    });
+                }
+            });
+        };
+
+        InitRadio('q1');
+
     }
-
-
-})
+});
