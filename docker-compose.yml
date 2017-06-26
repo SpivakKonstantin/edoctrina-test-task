@@ -11,10 +11,6 @@ web:
 mariadb:
     image: "mariadb"
     restart: always
-    ports:
-       - "3306:3306"
-#    volumes:
-#        - "./docker/mysql:/var/lib/mysql"
     environment:
         - MYSQL_ROOT_PASSWORD=1
         - MYSQL_DATABASE=yii2basic
@@ -29,8 +25,6 @@ php:
         - ".:/var/www"
     links:
         - mariadb
-
-
 
 node:
   build: ./docker/node
